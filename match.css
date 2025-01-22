@@ -53,7 +53,7 @@ ul button {
   border-radius: 8px;
   box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
   color: #333;
-  font-size: clamp(16px, 1vw, 25px);
+  font-size: clamp(12px, 3vw, 25px);
   font-weight: bold;
   /* padding: 10px 20px; */
   transition: all 0.2s ease;
@@ -70,7 +70,7 @@ ul button {
   border-radius: 8px;
   box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
   color: #333;
-  font-size: clamp(16px, 1vw, 25px);
+  font-size: clamp(12px, 3vw, 25px);
   font-weight: bold;
   transition: all 0.2s ease;
   cursor: pointer;
