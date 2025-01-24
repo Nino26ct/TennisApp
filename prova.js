@@ -1,4 +1,4 @@
-// VideoCamera
+// Variabili per la videocamera
 const videoElement = document.getElementById("camera-view");
 const startCameraButton = document.getElementById("start-camera");
 const stopCameraButton = document.getElementById("stop-camera");
@@ -10,6 +10,9 @@ let mediaRecorder; // Oggetto per registrare il video
 let recordedChunks = []; // Buffer per i chunk video
 const maxBufferChunks = 15; // Limite di 15 secondi (chunk da 1 secondo ciascuno)
 let isRecording = false; // Stato della registrazione
+let isTieBreak = false; // Stato del tie-break
+let tieBreakPointsPlayer1 = 0;
+let tieBreakPointsPlayer2 = 0;
 
 // Funzione per avviare la videocamera
 startCameraButton.addEventListener("click", async () => {
@@ -92,10 +95,10 @@ function saveLast15Seconds() {
   }
 }
 
-// Punteggio
+// Variabili per il punteggio
 const btnPlayer1 = document.querySelector(".btn-player1");
 const btnPlayer2 = document.querySelector(".btn-player2");
-const resetButton = document.getElementById("reset-points");
+const newMatch = document.getElementById("new-match");
 const winGame1 = document.getElementById("win-game1");
 const winSet1 = document.getElementById("win-set1");
 const winGame2 = document.getElementById("win-game2");
@@ -105,13 +108,207 @@ const scoreDisplayPlayer2 = document.getElementById("score-player2");
 
 let scorePlayer1 = 0;
 let scorePlayer2 = 0;
-let advantagePlayer = null;
-let spanGame = 0;
-let spanSet = 0;
+let advantagePlayer = null; // Tiene traccia del giocatore in vantaggio
 
 const tennisScores = [0, 15, 30, 40];
 
-// Funzione per resettare i punti e i game
+// Funzione per aggiornare il punteggio
+function updateScore(player) {
+  if (isTieBreak) {
+    // Gestione del tie-break
+    if (player === 1) {
+      tieBreakPointsPlayer1++;
+    } else {
+      tieBreakPointsPlayer2++;
+    }
+    updateTieBreakDisplay();
+
+    // Controlla se qualcuno ha vinto il tie-break
+    if (
+      tieBreakPointsPlayer1 >= 7 &&
+      tieBreakPointsPlayer1 - tieBreakPointsPlayer2 >= 2
+    ) {
+      endTieBreak(1);
+    } else if (
+      tieBreakPointsPlayer2 >= 7 &&
+      tieBreakPointsPlayer2 - tieBreakPointsPlayer1 >= 2
+    ) {
+      endTieBreak(2);
+    }
+  } else {
+    if (scorePlayer1 === 3 && scorePlayer2 === 3) {
+      // Punteggio 40 - 40
+      if (advantagePlayer === null) {
+        // Assegna il vantaggio al giocatore corrente
+        advantagePlayer = player;
+      } else if (advantagePlayer === player) {
+        // Il giocatore con il vantaggio vince il game
+        incrementGame(player);
+        advantagePlayer = null; // Resetta lo stato di vantaggio
+      } else {
+        // Se l'altro giocatore segna, si torna in parità
+        advantagePlayer = null;
+      }
+    } else {
+      // Punteggio normale
+      if (player === 1) {
+        if (scorePlayer1 < tennisScores.length - 1) {
+          scorePlayer1++;
+        } else {
+          incrementGame(1);
+        }
+      } else if (player === 2) {
+        if (scorePlayer2 < tennisScores.length - 1) {
+          scorePlayer2++;
+        } else {
+          incrementGame(2);
+        }
+      }
+    }
+
+    updateScoreDisplay();
+  }
+}
+
+// Funzione per aggiornare il display dei punteggi
+function updateScoreDisplay() {
+  if (scorePlayer1 === 3 && scorePlayer2 === 3) {
+    if (advantagePlayer === 1) {
+      scoreDisplayPlayer1.textContent = "Adv";
+      scoreDisplayPlayer2.textContent = "40";
+    } else if (advantagePlayer === 2) {
+      scoreDisplayPlayer1.textContent = "40";
+      scoreDisplayPlayer2.textContent = "Adv";
+    } else {
+      scoreDisplayPlayer1.textContent = "40";
+      scoreDisplayPlayer2.textContent = "40";
+    }
+  } else {
+    scoreDisplayPlayer1.textContent = tennisScores[scorePlayer1];
+    scoreDisplayPlayer2.textContent = tennisScores[scorePlayer2];
+  }
+}
+
+// Funzione per aggiornare il display del tie-break
+function updateTieBreakDisplay() {
+  scoreDisplayPlayer1.textContent = tieBreakPointsPlayer1;
+  scoreDisplayPlayer2.textContent = tieBreakPointsPlayer2;
+}
+
+// Funzione per incrementare il game
+function incrementGame(player) {
+  const currentGameCount1 = parseInt(winGame1.textContent, 10);
+  const currentGameCount2 = parseInt(winGame2.textContent, 10);
+
+  if (player === 1) {
+    winGame1.textContent = currentGameCount1 + 1;
+  } else if (player === 2) {
+    winGame2.textContent = currentGameCount2 + 1;
+  }
+
+  // Attiva il tie-break se i game sono 6-6
+  if (
+    parseInt(winGame1.textContent, 10) === 6 &&
+    parseInt(winGame2.textContent, 10) === 6
+  ) {
+    alert("inizio Tie Break");
+    startTieBreak();
+  } else {
+    checkSetWinner(player);
+  }
+
+  scorePlayer1 = 0; // Resetta il punteggio
+  scorePlayer2 = 0; // Resetta il punteggio
+  updateScoreDisplay();
+}
+
+// Funzione per attivare il tie-break
+function startTieBreak() {
+  isTieBreak = true;
+  tieBreakPointsPlayer1 = 0;
+  tieBreakPointsPlayer2 = 0;
+  updateTieBreakDisplay();
+}
+
+// Funzione per terminare il tie-break
+function endTieBreak(winner) {
+  isTieBreak = false;
+  if (winner === 1) {
+    incrementSet(1, 3, JSON.parse(localStorage.getItem("matchSettings")));
+  } else {
+    incrementSet(2, 3, JSON.parse(localStorage.getItem("matchSettings")));
+  }
+}
+
+// Funzione per verificare chi ha vinto il set
+function checkSetWinner(player) {
+  const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
+  const maxGames = 6; // Numero massimo di game per vincere il set in condizioni normali
+  const maxSets = matchSettings?.setCount; // Numero massimo di set per vincere la partita
+
+  const currentGameCount1 = parseInt(winGame1.textContent, 10);
+  const currentGameCount2 = parseInt(winGame2.textContent, 10);
+
+  // Caso 5-5: Regola speciale
+  if (currentGameCount1 >= 5 && currentGameCount2 >= 5) {
+    if (
+      player === 1 &&
+      currentGameCount1 >= 7 &&
+      currentGameCount1 - currentGameCount2 >= 2
+    ) {
+      incrementSet(1, maxSets, matchSettings);
+    } else if (
+      player === 2 &&
+      currentGameCount2 >= 7 &&
+      currentGameCount2 - currentGameCount1 >= 2
+    ) {
+      incrementSet(2, maxSets, matchSettings);
+    }
+  }
+  // Condizione normale: Vince il primo che raggiunge 6 con almeno 2 game di vantaggio
+  else if (
+    player === 1 &&
+    currentGameCount1 === maxGames &&
+    currentGameCount1 - currentGameCount2 >= 2
+  ) {
+    incrementSet(1, maxSets, matchSettings);
+  } else if (
+    player === 2 &&
+    currentGameCount2 === maxGames &&
+    currentGameCount2 - currentGameCount1 >= 2
+  ) {
+    incrementSet(2, maxSets, matchSettings);
+  }
+}
+
+// Funzione per incrementare il set
+function incrementSet(player, maxSets, matchSettings) {
+  if (player === 1) {
+    let currentSetWins = parseInt(winSet1.textContent, 10);
+    currentSetWins++;
+    winSet1.textContent = currentSetWins;
+
+    if (currentSetWins === maxSets) {
+      alert(`${matchSettings.nameP1} ha vinto la partita!`);
+      resetAll();
+    } else {
+      resetGameAndPoints();
+    }
+  } else if (player === 2) {
+    let currentSetWins = parseInt(winSet2.textContent, 10);
+    currentSetWins++;
+    winSet2.textContent = currentSetWins;
+
+    if (currentSetWins === maxSets) {
+      alert(`${matchSettings.nameP2} ha vinto la partita!`);
+      resetAll();
+    } else {
+      resetGameAndPoints();
+    }
+  }
+}
+
+// Funzione per resettare il punteggio
 function resetGameAndPoints() {
   scorePlayer1 = 0;
   scorePlayer2 = 0;
@@ -119,176 +316,24 @@ function resetGameAndPoints() {
   winGame2.textContent = 0;
   updateScoreDisplay();
 }
+
+// Funzione per resettare tutto (set e game)
 function resetAll() {
-  // Resetta punteggi dei giocatori
   scorePlayer1 = 0;
   scorePlayer2 = 0;
-  updateScoreDisplay();
-
-  // Resetta i game
   winGame1.textContent = 0;
   winGame2.textContent = 0;
-
-  // Resetta i set
   winSet1.textContent = 0;
   winSet2.textContent = 0;
-}
-
-function incrementGame(player) {
-  // Incrementa il numero di game vinti per il giocatore
-  if (player === 1) {
-    winGame1.textContent = parseInt(winGame1.textContent) + 1;
-    scorePlayer1 = 0; // Azzeriamo il punteggio
-    scorePlayer2 = 0; // Azzeriamo il punteggio
-  } else if (player === 2) {
-    winGame2.textContent = parseInt(winGame2.textContent) + 1;
-    scorePlayer1 = 0; // Azzeriamo il punteggio
-    scorePlayer2 = 0; // Azzeriamo il punteggio
-  }
-
-  // Verifica se uno dei giocatori ha vinto il set
-  checkSetWinner(player);
-}
-
-function checkSetWinner(player) {
-  const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
-  const maxGames = matchSettings?.gameCount || 6; // Imposta il numero massimo di game per un set
-  const maxSets = matchSettings?.setCount || 3; // Imposta il numero massimo di set per vincere la partita
-
-  if (player === 1) {
-    const currentGameCount = parseInt(winGame1.textContent, 10);
-    if (currentGameCount === maxGames) {
-      let currentSetWins = parseInt(winSet1.textContent, 10);
-      currentSetWins++;
-      winSet1.textContent = currentSetWins;
-
-      // Se il giocatore ha vinto abbastanza set, vince la partita
-      if (currentSetWins === maxSets) {
-        alert(`${matchSettings.nameP1} ha vinto la partita!`);
-        resetAll(); // Resetta tutto per una nuova partita
-      } else {
-        resetGameAndPoints(); // Resetta il punteggio e i game per il prossimo set
-      }
-    }
-  } else if (player === 2) {
-    const currentGameCount = parseInt(winGame2.textContent, 10);
-    if (currentGameCount === maxGames) {
-      let currentSetWins = parseInt(winSet2.textContent, 10);
-      currentSetWins++;
-      winSet2.textContent = currentSetWins;
-
-      // Se il giocatore ha vinto abbastanza set, vince la partita
-      if (currentSetWins === maxSets) {
-        alert(`${matchSettings.nameP2} ha vinto la partita!`);
-        resetAll(); // Resetta tutto per una nuova partita
-      } else {
-        resetGameAndPoints(); // Resetta il punteggio e i game per il prossimo set
-      }
-    }
-  }
-}
-
-// Funzione per aggiornare il punteggio
-function updateScore(player) {
-  // Recupera i dati dal localStorage
-  const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
-  const maxGames = matchSettings?.gameCount; // Numero massimo di game per set (default: 6)
-  const maxSets = matchSettings?.setCount; // Numero massimo di set per partita (default: 3)
-
-  if (player === 1) {
-    if (scorePlayer1 < tennisScores.length - 1) {
-      scorePlayer1++;
-    } else {
-      // Player 1 vince il game
-      const currentWins = parseInt(winGame1.textContent, 10);
-
-      if (currentWins + 1 === maxGames) {
-        // Player 1 vince il set
-        const currentSetWins = parseInt(winSet1.textContent, 10);
-        const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
-        const playerName1 = matchSettings?.nameP1;
-
-        if (currentSetWins + 1 === maxSets) {
-          // Incrementa il set e resetta punteggi e game
-          alert(`${playerName1} ha vinto la partita!`);
-
-          resetAll();
-        } else {
-          winSet1.textContent = currentSetWins + 1;
-          resetGameAndPoints();
-          // Qui puoi aggiungere logica per terminare la partita
-        }
-      } else {
-        // Incrementa il game
-        scorePlayer1 = 0;
-        scorePlayer2 = 0;
-        winGame1.textContent = currentWins + 1;
-      }
-    }
-  } else if (player === 2) {
-    if (scorePlayer2 < tennisScores.length - 1) {
-      scorePlayer2++;
-    } else {
-      // Player 2 vince il game
-      const currentWins = parseInt(winGame2.textContent, 10);
-
-      if (currentWins + 1 === maxGames) {
-        // Player 2 vince il set
-        const currentSetWins = parseInt(winSet2.textContent, 10);
-        const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
-        const playerName2 = matchSettings?.nameP2;
-
-        if (currentSetWins + 1 === maxSets) {
-          // Incrementa il set e resetta punteggi e game
-          alert(`${playerName2} ha vinto la partita!`);
-
-          resetAll();
-        } else {
-          winSet2.textContent = currentSetWins + 1;
-          resetGameAndPoints();
-        }
-      } else {
-        // Incrementa il game
-        scorePlayer1 = 0;
-        scorePlayer2 = 0;
-        winGame2.textContent = currentWins + 1;
-      }
-    }
-  }
   updateScoreDisplay();
-
-  // Salva l'ultimo video al punteggio
-  if (isRecording) {
-    if (mediaRecorder.state !== "inactive") {
-      mediaRecorder.stop();
-    }
-    saveLast15Seconds();
-
-    // Riavvia la registrazione in modo indipendente
-    mediaRecorder.start(1000);
-  }
 }
 
-// Funzione per aggiornare il display dei punteggi
-function updateScoreDisplay() {
-  scoreDisplayPlayer1.textContent = tennisScores[scorePlayer1];
-  scoreDisplayPlayer2.textContent = tennisScores[scorePlayer2];
-}
-
-// Event listener per i pulsanti
+// Ascoltatori eventi per i bottoni dei giocatori
 btnPlayer1.addEventListener("click", () => updateScore(1));
 btnPlayer2.addEventListener("click", () => updateScore(2));
 
-// Pulsante di reset punteggio
-resetButton.addEventListener("click", () => {
-  scorePlayer1 = 0;
-  scorePlayer2 = 0;
-  winGame1.textContent = 0;
-  winGame2.textContent = 0;
-  winSet1.textContent = 0;
-  winSet2.textContent = 0;
-  updateScoreDisplay();
-});
+// Ascoltatore per iniziare una nuova partita
+newMatch.addEventListener("click", () => (window.location.href = "index.html"));
 
 // Recupera le impostazioni della partita
 const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
