@@ -8,12 +8,13 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-image: url("/Images/RegisterSection.jpg"),
-    linear-gradient(rgba(0, 0, 0, 0.155), rgba(0, 0, 0, 0));
+  /* background-image: url("/Images/RegisterSection.jpg"),
+    linear-gradient(rgba(0, 0, 0, 0.155), rgba(0, 0, 0, 0)); */
   background-blend-mode: overlay;
   background-size: cover;
   background-position: center;
   height: 100vh; /* Imposta l'altezza della sezione */
+  font-weight: bold;
 }
 
 /* Contenitore del modulo */

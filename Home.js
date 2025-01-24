@@ -8,7 +8,7 @@ startMatchButton.addEventListener("click", () => {
   const setCount = document.getElementById("set").value;
 
   // Verifica che i campi obbligatori siano compilati
-  if (!nameP1 || !nameP2 || !gameCount || !setCount) {
+  if (!nameP1 || !nameP2 || !setCount) {
     alert("Per favore, completa tutti i campi obbligatori.");
     return;
   }

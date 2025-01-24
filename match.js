@@ -339,7 +339,7 @@ newMatch.addEventListener("click", () => (window.location.href = "index.html"));
 const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
 
 if (matchSettings) {
-  console.log("Impostazioni partita:", matchSettings);
+  // console.log("Impostazioni partita:", matchSettings);
   // Usa questi dati nella logica della partita
   const { nameP1, nameP2, gameCount, setCount } = matchSettings;
 
