@@ -197,7 +197,7 @@ function checkSetWinner(player) {
       if (currentSetWins === maxSets) {
         alert(`${matchSettings.nameP1} ha vinto la partita!`);
         resetAll(); // Resetta tutto per una nuova partita
-        window.location.href = "Home.html";
+        window.location.href = "index.html";
       } else {
         resetGameAndPoints(); // Resetta il punteggio e i game per il prossimo set
       }
@@ -213,7 +213,7 @@ function checkSetWinner(player) {
       if (currentSetWins === maxSets) {
         alert(`${matchSettings.nameP2} ha vinto la partita!`);
         resetAll(); // Resetta tutto per una nuova partita
-        window.location.href = "Home.html";
+        window.location.href = "index.html";
       } else {
         resetGameAndPoints(); // Resetta il punteggio e i game per il prossimo set
       }

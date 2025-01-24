@@ -4,51 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TennisApp</title>
-    <link rel="stylesheet" href="match.css">
+    <title> Impostazioni Match </title>
+    <link rel="stylesheet" href="Home.css">
 </head>
 
-<body>
-    <div class="camera-section">
-        <video id="camera-view" autoplay playsinline></video>
-        <br>
-        <button class="btn-camera" id="start-camera">Avvia Fotocamera</button>
-        <button id="stop-camera" style="display: none;">Spegni Fotocamera</button>
-        <p id="camera-error" style="display: none;">Impossibile accedere alla fotocamera.</p>
-    </div>
-    <div class="sezione-punti">
-        <p class="pSet">Set Totali: <span id="score-set">0</span></p>
-        <p class="pGame">Game TotalixSet: <span id="score-game">0</span></p>
-        <ul>
-            <li class="player1">
-                <button class="btn-player1">
-                    Player 1
-                </button>
-            </li>
-            <hr>
-            <li class="player2">
-                <button class="btn-player2">
-                    Player 2
-                </button>
-            </li>
-        </ul>
-        <button id="reset-points" class="btn-reset">Azzera Partita</button>
-    </div>
-    <div id="video-container"></div>
-    <div class="scoreboard">
-        <div class="scoreboard1">
-            <span class="name-player1">Player 1: </span><span id="score-player1">0</span>
-            <span>Game: <span id="win-game1">0</span></span>
-            <span>Set: <span id="win-set1">0</span></span>
-        </div>
-        <div class="scoreboard2">
-            <span class="name-player2">Player 2:</span> <span id="score-player2">0</span>
-            <span>Game: <span id="win-game2">0</span></span>
-            <span>Set: <span id="win-set2">0</span></span>
-        </div>
-    </div>
-    <script src="match.js"></script>
 
+<body>
+    <!-- Sezione con l'immagine di background -->
+    <div class="section"></div>
+
+    <div class="container">
+        <h2> Impostazioni Match </h2>
+
+        <form id="impostazioni">
+
+            <label for="impPlayer1"> Player 1 </label>
+            <input type="text" id="nameP1" name="nameP1" maxlength="12" placeholder="Nome Player 1" required>
+
+
+            <label for="impPlayer2"> Player 2 </label>
+            <input type="text" id="nameP2" name="nameP2" maxlength="12" placeholder="Nome Player 2" required>
+
+
+            <label for="game"> Game </label>
+            <input type="number" id="game" name="game" placeholder="Numero Game" required>
+
+
+            <label for="set"> Set </label>
+            <input type="number" id="set" name="set" placeholder="Numero Set">
+
+
+            <button type="button" id="start-match">Avvia Match</button>
+        </form>
+    </div>
+    <script src="Home.js"></script>
 </body>
 
 </html>

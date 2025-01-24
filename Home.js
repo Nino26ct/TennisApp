@@ -24,6 +24,6 @@ startMatchButton.addEventListener("click", () => {
     })
   );
 
-  // Reindirizza alla pagina index.html
-  window.location.href = "index.html";
+  // Reindirizza alla pagina match.html
+  window.location.href = "match.html";
 });
