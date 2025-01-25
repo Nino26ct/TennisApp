@@ -37,7 +37,8 @@ label {
   text-align: left;
 }
 
-input {
+input,
+select {
   width: 100%;
   padding: 10px;
   margin-bottom: 15px;

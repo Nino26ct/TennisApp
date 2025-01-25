@@ -30,8 +30,14 @@
             <input style="display: none;" type="number" id="game" name="game" placeholder="Numero Game" disabled>
 
 
-            <label for="set"> Set </label>
-            <input type="number" id="set" name="set" placeholder="Numero Set">
+            <label for="set">Set</label>
+            <select id="set" name="set">
+                <option value="" disabled selected>Seleziona il numero di set</option>
+                <option value="1">1</option>
+                <option value="3">3</option>
+                <option value="5">5</option>
+            </select>
+
 
 
             <button type="button" id="start-match">Avvia Match</button>

@@ -10,9 +10,6 @@ let mediaRecorder; // Oggetto per registrare il video
 let recordedChunks = []; // Buffer per i chunk video
 const maxBufferChunks = 15; // Limite di 15 secondi (chunk da 1 secondo ciascuno)
 let isRecording = false; // Stato della registrazione
-let isTieBreak = false; // Stato del tie-break
-let tieBreakPointsPlayer1 = 0;
-let tieBreakPointsPlayer2 = 0;
 
 // Funzione per avviare la videocamera
 startCameraButton.addEventListener("click", async () => {
@@ -106,6 +103,9 @@ const winSet2 = document.getElementById("win-set2");
 const scoreDisplayPlayer1 = document.getElementById("score-player1");
 const scoreDisplayPlayer2 = document.getElementById("score-player2");
 
+let isTieBreak = false; // Stato del tie-break
+let tieBreakPointsPlayer1 = 0;
+let tieBreakPointsPlayer2 = 0;
 let scorePlayer1 = 0;
 let scorePlayer2 = 0;
 let advantagePlayer = null; // Tiene traccia del giocatore in vantaggio
@@ -283,12 +283,13 @@ function checkSetWinner(player) {
 
 // Funzione per incrementare il set
 function incrementSet(player, maxSets, matchSettings) {
+  const setsToWin = Math.ceil(maxSets / 2);
   if (player === 1) {
     let currentSetWins = parseInt(winSet1.textContent, 10);
     currentSetWins++;
     winSet1.textContent = currentSetWins;
 
-    if (currentSetWins === maxSets) {
+    if (currentSetWins === setsToWin) {
       alert(`${matchSettings.nameP1} ha vinto la partita!`);
       resetAll();
     } else {
@@ -299,7 +300,7 @@ function incrementSet(player, maxSets, matchSettings) {
     currentSetWins++;
     winSet2.textContent = currentSetWins;
 
-    if (currentSetWins === maxSets) {
+    if (currentSetWins === setsToWin) {
       alert(`${matchSettings.nameP2} ha vinto la partita!`);
       resetAll();
     } else {

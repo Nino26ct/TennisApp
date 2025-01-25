@@ -1,0 +1,65 @@
+.campo {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 50vh;
+  margin: auto;
+  background-color: #006400; /* colore del campo */
+  border: 5px solid white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-player1,
+.btn-player2 {
+  position: absolute;
+  width: 120px;
+  height: 50px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: clamp(12px, 1vw, 25px);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-player1 {
+  background-color: #21c44f;
+  top: 50%;
+  left: 25%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-player2 {
+  background-color: red;
+  top: 50%;
+  right: 25%;
+  transform: translate(50%, -50%);
+}
+
+.btn-aceP1,
+.btn-aceP2 {
+  position: absolute;
+  width: 80px;
+  height: 50px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: clamp(12px, 0.5vw, 25px);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-aceP1 {
+  background-color: #000;
+  top: 0;
+  left: 0;
+  margin: 0; /* Rimuove eventuali margini */
+}
+
+.btn-aceP2 {
+  background-color: #000;
+  top: 0;
+  right: 0;
+  margin: 0; /* Rimuove eventuali margini */
+}
