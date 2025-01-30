@@ -209,12 +209,13 @@ hr {
 
 video {
   width: 100%;
-  max-width: 600px;
+  /* max-width: 600px; */
   height: 50vh;
   border-radius: 10px;
   margin-bottom: 10px;
   background-color: black;
   margin: 0;
+  object-fit: cover; /* Fa in modo che il video riempia tutto */
 }
 
 #start-camera {
@@ -272,4 +273,128 @@ video {
   left: 10px;
   padding: 5px 10px;
   font-size: 20px;
+}
+
+@media screen and (orientation: landscape) {
+  video {
+    width: 100%;
+    /* max-width: 600px; */
+    height: 75vh;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background-color: black;
+    margin: 0;
+    object-fit: cover; /* Fa in modo che il video riempia tutto */
+  }
+
+  .btn-player1,
+  .btn-player2,
+  .btn-erroreP1,
+  .btn-erroreP2 {
+    position: absolute;
+    width: 120px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: clamp(12px, 1vw, 25px);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .btn-player1 {
+    background-color: #21c44f;
+    /* background: linear-gradient(145deg, #000000, #000000); */
+    border: 2px solid #d1d1d1;
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
+    color: #333;
+    font-size: clamp(12px, 0.5vw, 25px);
+    font-weight: bold;
+    /* padding: 10px 20px; */
+    transition: all 0.2s ease;
+    cursor: pointer;
+    top: 40%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+  }
+  .btn-player1:active {
+    box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
+    /* transform: translateY(2px); */
+  }
+
+  .btn-erroreP1 {
+    background-color: red;
+    /* background: linear-gradient(145deg, #000000, #000000); */
+    border: 2px solid #d1d1d1;
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
+    color: #333;
+    font-size: clamp(12px, 0.5vw, 25px);
+    font-weight: bold;
+    /* padding: 10px 20px; */
+    transition: all 0.2s ease;
+    cursor: pointer;
+    top: 80%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+  }
+  .btn-erroreP1:active {
+    box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
+    /* transform: translateY(2px); */
+  }
+
+  .btn-player2 {
+    background-color: #21c44f;
+    border: 2px solid #d1d1d1;
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
+    color: #333;
+    font-size: clamp(12px, 1vw, 25px);
+    font-weight: bold;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    top: 40%;
+    right: 25%;
+    transform: translate(50%, -50%);
+  }
+  .btn-player2:active {
+    box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
+    /* transform: translateY(2px); */
+  }
+
+  .btn-erroreP2 {
+    background-color: red;
+    border: 2px solid #d1d1d1;
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
+    color: #333;
+    font-size: clamp(12px, 1vw, 25px);
+    font-weight: bold;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    top: 80%;
+    right: 25%;
+    transform: translate(50%, -50%);
+  }
+  .btn-erroreP2:active {
+    box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
+    /* transform: translateY(2px); */
+  }
+
+  .btn-aceP1,
+  .btn-aceP2,
+  .btn-FalloP1,
+  .btn-FalloP2,
+  .btn-DoppioFalloP1,
+  .btn-DoppioFalloP2 {
+    position: absolute;
+    width: 80px;
+    height: 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: clamp(12px, 0.5vw, 25px);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    color: #333;
+  }
 }
