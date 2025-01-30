@@ -15,7 +15,7 @@ let isRecording = false; // Stato della registrazione
 startCameraButton.addEventListener("click", async () => {
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
+      video: { facingMode: "environment" }, // Apertura videocamera posteriore
       audio: false,
     });
     videoElement.srcObject = stream;
