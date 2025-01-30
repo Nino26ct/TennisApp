@@ -147,6 +147,7 @@ hr {
   font-size: clamp(12px, 0.5vw, 25px);
   transition: all 0.2s ease;
   cursor: pointer;
+  color: #333;
 }
 
 .btn-aceP1 {
