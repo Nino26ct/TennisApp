@@ -40,7 +40,9 @@ hr {
 }
 
 .btn-player1,
-.btn-player2 {
+.btn-player2,
+.btn-erroreP1,
+.btn-erroreP2 {
   position: absolute;
   width: 120px;
   height: 50px;
@@ -63,16 +65,56 @@ hr {
   /* padding: 10px 20px; */
   transition: all 0.2s ease;
   cursor: pointer;
-  top: 50%;
+  top: 30%;
   left: 25%;
   transform: translate(-50%, -50%);
 }
 .btn-player1:active {
   box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
-  transform: translateY(2px);
+  /* transform: translateY(2px); */
+}
+
+.btn-erroreP1 {
+  background-color: red;
+  /* background: linear-gradient(145deg, #000000, #000000); */
+  border: 2px solid #d1d1d1;
+  border-radius: 8px;
+  box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
+  color: #333;
+  font-size: clamp(12px, 0.5vw, 25px);
+  font-weight: bold;
+  /* padding: 10px 20px; */
+  transition: all 0.2s ease;
+  cursor: pointer;
+  top: 60%;
+  left: 25%;
+  transform: translate(-50%, -50%);
+}
+.btn-erroreP1:active {
+  box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
+  /* transform: translateY(2px); */
 }
 
 .btn-player2 {
+  background-color: #21c44f;
+  border: 2px solid #d1d1d1;
+  border-radius: 8px;
+  box-shadow: 4px 4px 8px #000000, -4px -4px 8px #000000;
+  color: #333;
+  font-size: clamp(12px, 1vw, 25px);
+  font-weight: bold;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  top: 30%;
+  right: 25%;
+  transform: translate(50%, -50%);
+}
+.btn-player2:active {
+  box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
+  /* transform: translateY(2px); */
+}
+
+.btn-erroreP2 {
   background-color: red;
   border: 2px solid #d1d1d1;
   border-radius: 8px;
@@ -82,20 +124,24 @@ hr {
   font-weight: bold;
   transition: all 0.2s ease;
   cursor: pointer;
-  top: 50%;
+  top: 60%;
   right: 25%;
   transform: translate(50%, -50%);
 }
-.btn-player2:active {
+.btn-erroreP2:active {
   box-shadow: inset 4px 4px 8px #000000, inset -4px -4px 8px #000000;
-  transform: translateY(2px);
+  /* transform: translateY(2px); */
 }
 
 .btn-aceP1,
-.btn-aceP2 {
+.btn-aceP2,
+.btn-FalloP1,
+.btn-FalloP2,
+.btn-DoppioFalloP1,
+.btn-DoppioFalloP2 {
   position: absolute;
   width: 80px;
-  height: 50px;
+  height: 40px;
   border-radius: 8px;
   font-weight: bold;
   font-size: clamp(12px, 0.5vw, 25px);
@@ -104,18 +150,34 @@ hr {
 }
 
 .btn-aceP1 {
-  color: white;
-  background-color: #000;
+  /* color: white; */
+  background-color: #21c44f;
   top: 0;
   left: 0;
   margin: 0; /* Rimuove eventuali margini */
 }
 
 .btn-aceP2 {
-  color: white;
-  background-color: #000;
+  /* color: white; */
+  background-color: #21c44f;
   top: 0;
   right: 0;
+  margin: 0; /* Rimuove eventuali margini */
+}
+
+.btn-FalloP1,
+.btn-DoppioFalloP1 {
+  background-color: red;
+  top: 0;
+  left: 78px;
+  margin: 0; /* Rimuove eventuali margini */
+}
+
+.btn-FalloP2,
+.btn-DoppioFalloP2 {
+  background-color: red;
+  top: 0;
+  right: 78px;
   margin: 0; /* Rimuove eventuali margini */
 }
 

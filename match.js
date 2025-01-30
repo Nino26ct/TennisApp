@@ -94,15 +94,32 @@ function saveLast15Seconds() {
 
 // Variabili per il punteggio
 const btnPlayer1 = document.querySelector(".btn-player1");
+const btnErrorPlayer1 = document.querySelector(".btn-erroreP1");
+const btnAce1 = document.querySelector(".btn-aceP1");
+const btnFallo1 = document.querySelector(".btn-FalloP1");
 const btnPlayer2 = document.querySelector(".btn-player2");
+const btnErrorPlayer2 = document.querySelector(".btn-erroreP2");
+const btnAce2 = document.querySelector(".btn-aceP2");
+const btnFallo2 = document.querySelector(".btn-FalloP2");
+
 const newMatch = document.getElementById("new-match");
+
 const winGame1 = document.getElementById("win-game1");
 const winSet1 = document.getElementById("win-set1");
 const winGame2 = document.getElementById("win-game2");
 const winSet2 = document.getElementById("win-set2");
-const scoreDisplayPlayer1 = document.getElementById("score-player1");
-const scoreDisplayPlayer2 = document.getElementById("score-player2");
 
+const scoreDisplayPlayer1 = document.getElementById("score-player1");
+const scoreDisplayAce1 = document.getElementById("score-aceP1");
+const scoreDisplayFallo1 = document.getElementById("score-FalloP1");
+const scoreDisplayPlayer2 = document.getElementById("score-player2");
+const scoreDisplayAce2 = document.getElementById("score-aceP2");
+const scoreDisplayFallo2 = document.getElementById("score-FalloP2");
+
+let falloPointPlayer1 = 0;
+let falloPointPlayer2 = 0;
+let acePointPlayer1 = 0;
+let acePointPlayer2 = 0;
 let isTieBreak = false; // Stato del tie-break
 let tieBreakPointsPlayer1 = 0;
 let tieBreakPointsPlayer2 = 0;
@@ -111,6 +128,84 @@ let scorePlayer2 = 0;
 let advantagePlayer = null; // Tiene traccia del giocatore in vantaggio
 
 const tennisScores = [0, 15, 30, 40];
+
+//DOPPIO FALLO
+
+// Creazione dei pulsanti "Doppio Fallo" per entrambi i giocatori
+const doubleFaultBtn1 = document.createElement("button");
+doubleFaultBtn1.textContent = "Doppio Fallo";
+doubleFaultBtn1.classList.add("btn-DoppioFalloP1");
+
+const doubleFaultBtn2 = document.createElement("button");
+doubleFaultBtn2.textContent = "Doppio Fallo";
+doubleFaultBtn2.classList.add("btn-DoppioFalloP2");
+
+// Funzione per ripristinare il pulsante "Fallo" se viene premuto un altro pulsante
+function restoreFaultButton() {
+  if (doubleFaultBtn1.parentNode) {
+    doubleFaultBtn1.remove();
+    btnFallo1.style.display = "inline-block";
+  }
+  if (doubleFaultBtn2.parentNode) {
+    doubleFaultBtn2.remove();
+    btnFallo2.style.display = "inline-block";
+  }
+}
+
+// Funzione per sostituire il pulsante "Fallo" con "Doppio Fallo"
+function replaceWithDoubleFaultButton(player) {
+  if (player === 1) {
+    btnFallo1.style.display = "none";
+    btnFallo1.parentNode.insertBefore(doubleFaultBtn1, btnFallo1.nextSibling);
+  } else {
+    btnFallo2.style.display = "none";
+    btnFallo2.parentNode.insertBefore(doubleFaultBtn2, btnFallo2.nextSibling);
+  }
+}
+
+// Eventi per il pulsante "Fallo" di entrambi i giocatori
+btnFallo1.addEventListener("click", () => {
+  falloPointPlayer1++;
+  scoreDisplayFallo1.textContent = falloPointPlayer1;
+  replaceWithDoubleFaultButton(1);
+});
+
+btnFallo2.addEventListener("click", () => {
+  falloPointPlayer2++;
+  scoreDisplayFallo2.textContent = falloPointPlayer2;
+  replaceWithDoubleFaultButton(2);
+});
+
+// Eventi per i pulsanti "Doppio Fallo"
+doubleFaultBtn1.addEventListener("click", () => {
+  falloPointPlayer1++;
+  scoreDisplayFallo1.textContent = falloPointPlayer1;
+  restoreFaultButton(1);
+});
+
+doubleFaultBtn2.addEventListener("click", () => {
+  falloPointPlayer2++;
+  scoreDisplayFallo2.textContent = falloPointPlayer2;
+  restoreFaultButton(2);
+});
+
+// Eventi per i pulsanti che annullano "Doppio Fallo" e ripristinano "Fallo"
+btnPlayer1.addEventListener("click", () => restoreFaultButton(1));
+btnAce1.addEventListener("click", () => restoreFaultButton(1));
+btnErrorPlayer1.addEventListener("click", () => restoreFaultButton(1));
+btnPlayer2.addEventListener("click", () => restoreFaultButton(2));
+btnErrorPlayer2.addEventListener("click", () => restoreFaultButton(2));
+btnAce2.addEventListener("click", () => restoreFaultButton(2));
+
+// funziona per aggiornare punteggio degli ace
+function updateScoreAce(player) {
+  if (player === 1) {
+    acePointPlayer1++;
+  } else if (player === 2) {
+    acePointPlayer2++;
+  }
+  updateAceDisplay();
+}
 
 // Funzione per aggiornare il punteggio
 function updateScore(player) {
@@ -168,6 +263,14 @@ function updateScore(player) {
 
     updateScoreDisplay();
   }
+}
+
+//Funzioni per aggiornare i vari display
+
+//Funzione per aggiornare il display degli ace
+function updateAceDisplay() {
+  scoreDisplayAce1.textContent = acePointPlayer1;
+  scoreDisplayAce2.textContent = acePointPlayer2;
 }
 
 // Funzione per aggiornare il display dei punteggi
@@ -330,8 +433,19 @@ function resetAll() {
 }
 
 // Ascoltatori eventi per i bottoni dei giocatori
+
+//player1
 btnPlayer1.addEventListener("click", () => updateScore(1));
+btnErrorPlayer1.addEventListener("click", () => updateScore(2));
+btnAce1.addEventListener("click", () => updateScore(1));
+btnAce1.addEventListener("click", () => updateScoreAce(1));
+doubleFaultBtn1.addEventListener("click", () => updateScore(2));
+//player2
 btnPlayer2.addEventListener("click", () => updateScore(2));
+btnErrorPlayer2.addEventListener("click", () => updateScore(1));
+btnAce2.addEventListener("click", () => updateScore(2));
+btnAce2.addEventListener("click", () => updateScoreAce(2));
+doubleFaultBtn2.addEventListener("click", () => updateScore(1));
 
 // Ascoltatore per iniziare una nuova partita
 newMatch.addEventListener("click", () => (window.location.href = "index.html"));
@@ -348,7 +462,9 @@ if (matchSettings) {
   document.querySelector(".name-player1").textContent = nameP1;
   document.querySelector(".name-player2").textContent = nameP2;
   document.querySelector(".btn-player1").textContent = nameP1;
+  document.querySelector(".btn-erroreP1").textContent = nameP1;
   document.querySelector(".btn-player2").textContent = nameP2;
+  document.querySelector(".btn-erroreP2").textContent = nameP2;
   document.querySelector("#score-game").textContent = gameCount;
   document.querySelector("#score-set").textContent = setCount;
 }
