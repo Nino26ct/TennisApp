@@ -129,6 +129,63 @@ let advantagePlayer = null; // Tiene traccia del giocatore in vantaggio
 
 const tennisScores = [0, 15, 30, 40];
 
+window.onload = function () {
+  loadMatchState(); // Carica lo stato salvato
+
+  // Altri codici relativi agli eventi...
+};
+
+// Funzione per salvare lo stato della partita nel localStorage
+function saveMatchState() {
+  const matchState = {
+    scorePlayer1: scorePlayer1,
+    scorePlayer2: scorePlayer2,
+    winGame1: winGame1.textContent,
+    winGame2: winGame2.textContent,
+    winSet1: winSet1.textContent,
+    winSet2: winSet2.textContent,
+    acePointPlayer1: acePointPlayer1,
+    acePointPlayer2: acePointPlayer2,
+    falloPointPlayer1: falloPointPlayer1,
+    falloPointPlayer2: falloPointPlayer2,
+    tieBreakPointsPlayer1: tieBreakPointsPlayer1,
+    tieBreakPointsPlayer2: tieBreakPointsPlayer2,
+    advantagePlayer: advantagePlayer,
+    isTieBreak: isTieBreak,
+  };
+  localStorage.setItem("matchState", JSON.stringify(matchState));
+}
+
+// Funzione per caricare lo stato della partita dal localStorage
+function loadMatchState() {
+  const savedState = JSON.parse(localStorage.getItem("matchState"));
+  if (savedState) {
+    // Se ci sono dati nel localStorage, carica lo stato
+    scorePlayer1 = savedState.scorePlayer1;
+    scorePlayer2 = savedState.scorePlayer2;
+    winGame1.textContent = savedState.winGame1;
+    winGame2.textContent = savedState.winGame2;
+    winSet1.textContent = savedState.winSet1;
+    winSet2.textContent = savedState.winSet2;
+    acePointPlayer1 = savedState.acePointPlayer1;
+    acePointPlayer2 = savedState.acePointPlayer2;
+    falloPointPlayer1 = savedState.falloPointPlayer1;
+    falloPointPlayer2 = savedState.falloPointPlayer2;
+    tieBreakPointsPlayer1 = savedState.tieBreakPointsPlayer1;
+    tieBreakPointsPlayer2 = savedState.tieBreakPointsPlayer2;
+    advantagePlayer = savedState.advantagePlayer;
+    isTieBreak = savedState.isTieBreak;
+
+    // Chiamate per aggiornare le interfacce utente
+    updateScoreDisplay();
+    updateAceDisplay();
+    updateTieBreakDisplay();
+  } else {
+    // Se non ci sono dati salvati, inizia la partita con i valori di default (azzerati)
+    resetAll();
+  }
+}
+
 //DOPPIO FALLO
 
 // Creazione dei pulsanti "Doppio Fallo" per entrambi i giocatori
@@ -205,6 +262,7 @@ function updateScoreAce(player) {
     acePointPlayer2++;
   }
   updateAceDisplay();
+  saveMatchState();
 }
 
 // Funzione per aggiornare il punteggio
@@ -216,6 +274,7 @@ function updateScore(player) {
     } else {
       tieBreakPointsPlayer2++;
     }
+    saveMatchState();
     updateTieBreakDisplay();
 
     // Controlla se qualcuno ha vinto il tie-break
@@ -262,6 +321,7 @@ function updateScore(player) {
     }
 
     updateScoreDisplay();
+    saveMatchState();
   }
 }
 
@@ -330,6 +390,7 @@ function startTieBreak() {
   isTieBreak = true;
   tieBreakPointsPlayer1 = 0;
   tieBreakPointsPlayer2 = 0;
+  saveMatchState();
   updateTieBreakDisplay();
 }
 
@@ -423,13 +484,36 @@ function resetGameAndPoints() {
 
 // Funzione per resettare tutto (set e game)
 function resetAll() {
+  // Reset dei punteggi dei giocatori
   scorePlayer1 = 0;
   scorePlayer2 = 0;
   winGame1.textContent = 0;
   winGame2.textContent = 0;
   winSet1.textContent = 0;
   winSet2.textContent = 0;
+
+  // Reset dei punteggi degli ace
+  acePointPlayer1 = 0;
+  acePointPlayer2 = 0;
+  scoreDisplayAce1.textContent = 0;
+  scoreDisplayAce2.textContent = 0;
+
+  // Reset dei punteggi dei falli
+  falloPointPlayer1 = 0;
+  falloPointPlayer2 = 0;
+  scoreDisplayFallo1.textContent = 0;
+  scoreDisplayFallo2.textContent = 0;
+
+  // Reset del vantaggio, tie-break e punteggi di gioco
+  isTieBreak = false;
+  tieBreakPointsPlayer1 = 0;
+  tieBreakPointsPlayer2 = 0;
+  advantagePlayer = null;
+
+  // Resetta tutti gli altri display e variabili
+  updateAceDisplay();
   updateScoreDisplay();
+  updateTieBreakDisplay();
 }
 
 // Ascoltatori eventi per i bottoni dei giocatori
@@ -448,7 +532,37 @@ btnAce2.addEventListener("click", () => updateScoreAce(2));
 doubleFaultBtn2.addEventListener("click", () => updateScore(1));
 
 // Ascoltatore per iniziare una nuova partita
-newMatch.addEventListener("click", () => (window.location.href = "index.html"));
+newMatch.addEventListener("click", () => {
+  // 1. Reset dei punteggi e delle variabili
+  scorePlayer1 = 0;
+  scorePlayer2 = 0;
+  winGame1.textContent = 0;
+  winGame2.textContent = 0;
+  winSet1.textContent = 0;
+  winSet2.textContent = 0;
+
+  acePointPlayer1 = 0;
+  acePointPlayer2 = 0;
+  scoreDisplayAce1.textContent = 0;
+  scoreDisplayAce2.textContent = 0;
+
+  falloPointPlayer1 = 0;
+  falloPointPlayer2 = 0;
+  scoreDisplayFallo1.textContent = 0;
+  scoreDisplayFallo2.textContent = 0;
+
+  // Reset del vantaggio, tie-break e punteggi di gioco
+  isTieBreak = false;
+  tieBreakPointsPlayer1 = 0;
+  tieBreakPointsPlayer2 = 0;
+  advantagePlayer = null;
+
+  // 2. Pulisci il localStorage per eliminare le impostazioni della partita
+  localStorage.removeItem("matchState");
+
+  // 3. Ricarica la pagina per iniziare una nuova partita
+  window.location.href = "index.html"; // Assicurati che questa sia la pagina di partenza
+});
 
 // Recupera le impostazioni della partita
 const matchSettings = JSON.parse(localStorage.getItem("matchSettings"));
