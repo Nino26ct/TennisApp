@@ -144,11 +144,11 @@ doubleFaultBtn2.classList.add("btn-DoppioFalloP2");
 function restoreFaultButton() {
   if (doubleFaultBtn1.parentNode) {
     doubleFaultBtn1.remove();
-    // btnFallo1.style.display = "inline-block";
+    btnFallo1.style.display = "inline-block";
   }
   if (doubleFaultBtn2.parentNode) {
     doubleFaultBtn2.remove();
-    // btnFallo2.style.display = "inline-block";
+    btnFallo2.style.display = "inline-block";
   }
 }
 
