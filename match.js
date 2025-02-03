@@ -1,98 +1,4 @@
-// Variabili per la videocamera
-const videoElement = document.getElementById("camera-view");
-const startCameraButton = document.getElementById("start-camera");
-const stopCameraButton = document.getElementById("stop-camera");
-const cameraError = document.getElementById("camera-error");
-const videoContainer = document.getElementById("video-container"); // Contenitore per i video salvati
-
-let stream; // Flusso video
-let mediaRecorder; // Oggetto per registrare il video
-let recordedChunks = []; // Buffer per i chunk video
-const maxBufferChunks = 15; // Limite di 15 secondi (chunk da 1 secondo ciascuno)
-let isRecording = false; // Stato della registrazione
-
-// Funzione per avviare la videocamera
-startCameraButton.addEventListener("click", async () => {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" }, // Apertura videocamera posteriore
-      audio: false,
-    });
-    videoElement.srcObject = stream;
-    startCameraButton.style.display = "none";
-    stopCameraButton.style.display = "inline-block";
-    cameraError.style.display = "none";
-
-    let options;
-
-    // Verifica se il browser supporta MP4 o MP4 Safari
-    if (MediaRecorder.isTypeSupported("video/mp4")) {
-      options = { mimeType: "video/mp4" };
-    } else if (MediaRecorder.isTypeSupported("video/mp4;codecs=h264")) {
-      options = { mimeType: "video/mp4;codecs=h264" }; // Safari (Apple)
-    } else if (MediaRecorder.isTypeSupported("video/webm")) {
-      options = { mimeType: "video/webm" }; // WebM come fallback
-    } else {
-      throw new Error("Nessun formato video supportato dal tuo browser.");
-    }
-
-    mediaRecorder = new MediaRecorder(stream, options);
-
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
-        // Mantieni solo gli ultimi 15 secondi (se il buffer supera il limite, elimina i più vecchi)
-        while (recordedChunks.length > maxBufferChunks) {
-          recordedChunks.shift();
-        }
-      }
-    };
-
-    mediaRecorder.start(1000); // Registra in segmenti da 1 secondo
-    isRecording = true;
-  } catch (error) {
-    console.error("Errore nell'accesso alla videocamera:", error);
-    cameraError.style.display = "block";
-    cameraError.textContent = "Errore: " + error.message;
-  }
-});
-
-// Funzione per fermare la videocamera
-stopCameraButton.addEventListener("click", () => {
-  if (stream) {
-    stream.getTracks().forEach((track) => track.stop());
-    videoElement.srcObject = null;
-    stream = null;
-    isRecording = false;
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-      mediaRecorder.stop();
-    }
-  }
-  startCameraButton.style.display = "inline-block";
-  stopCameraButton.style.display = "none";
-});
-
-// Funzione per salvare gli ultimi 15 secondi in una cartella visiva
-function saveLast15Seconds() {
-  if (recordedChunks.length > 0) {
-    const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
-    const url = URL.createObjectURL(blob);
-
-    // Crea un elemento video e lo aggiunge al contenitore
-    const videoItem = document.createElement("video");
-    videoItem.src = url;
-    videoItem.controls = true;
-    videoItem.width = 320;
-    videoContainer.appendChild(videoItem);
-
-    // Resetta i chunk solo per la nuova registrazione
-    recordedChunks = [];
-  } else {
-    console.warn("Non ci sono dati da salvare.");
-  }
-}
-
-// Variabili per il punteggio
+//Bottoni del campo
 const btnPlayer1 = document.querySelector(".btn-player1");
 const btnErrorPlayer1 = document.querySelector(".btn-erroreP1");
 const btnAce1 = document.querySelector(".btn-aceP1");
@@ -102,6 +8,7 @@ const btnErrorPlayer2 = document.querySelector(".btn-erroreP2");
 const btnAce2 = document.querySelector(".btn-aceP2");
 const btnFallo2 = document.querySelector(".btn-FalloP2");
 
+// Variabili per il punteggio
 const newMatch = document.getElementById("new-match");
 
 const winGame1 = document.getElementById("win-game1");
@@ -130,7 +37,8 @@ let advantagePlayer = null; // Tiene traccia del giocatore in vantaggio
 const tennisScores = [0, 15, 30, 40];
 
 window.onload = function () {
-  loadMatchState(); // Carica lo stato salvato
+  loadMatchState();
+  updateScoreDisplay(); // Carica lo stato salvato
 
   // Altri codici relativi agli eventi...
 };
@@ -180,6 +88,7 @@ function loadMatchState() {
     updateScoreDisplay();
     updateAceDisplay();
     updateTieBreakDisplay();
+    updateFalloDisplay();
   } else {
     // Se non ci sono dati salvati, inizia la partita con i valori di default (azzerati)
     resetAll();
@@ -187,6 +96,11 @@ function loadMatchState() {
 }
 
 //DOPPIO FALLO
+
+function updateFalloDisplay() {
+  scoreDisplayFallo1.textContent = falloPointPlayer1;
+  scoreDisplayFallo2.textContent = falloPointPlayer2;
+}
 
 // Creazione dei pulsanti "Doppio Fallo" per entrambi i giocatori
 const doubleFaultBtn1 = document.createElement("button");
@@ -303,6 +217,7 @@ function updateScore(player) {
         // Se l'altro giocatore segna, si torna in parità
         advantagePlayer = null;
       }
+      saveMatchState();
     } else {
       // Punteggio normale
       if (player === 1) {
@@ -319,7 +234,6 @@ function updateScore(player) {
         }
       }
     }
-
     updateScoreDisplay();
     saveMatchState();
   }
@@ -390,7 +304,6 @@ function startTieBreak() {
   isTieBreak = true;
   tieBreakPointsPlayer1 = 0;
   tieBreakPointsPlayer2 = 0;
-  saveMatchState();
   updateTieBreakDisplay();
 }
 
@@ -582,3 +495,124 @@ if (matchSettings) {
   document.querySelector("#score-game").textContent = gameCount;
   document.querySelector("#score-set").textContent = setCount;
 }
+
+// Variabili per la videocamera
+const videoElement = document.getElementById("camera-view");
+const startCameraButton = document.getElementById("start-camera");
+const stopCameraButton = document.getElementById("stop-camera");
+const cameraError = document.getElementById("camera-error");
+const videoContainer = document.getElementById("video-container"); // Contenitore per i video salvati
+
+let stream; // Flusso video
+let mediaRecorder; // Oggetto per registrare il video
+let recordedChunks = []; // Buffer per i chunk video
+let isRecording = false; // Stato della registrazione
+let isStoppingCamera = false; // Flag per evitare il salvataggio quando si spegne la fotocamera
+
+// Funzione per avviare la videocamera e iniziare la registrazione
+async function startCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" }, // Apertura videocamera posteriore
+      audio: false,
+    });
+    videoElement.srcObject = stream;
+    startCameraButton.style.display = "none";
+    stopCameraButton.style.display = "inline-block";
+    cameraError.style.display = "none";
+
+    startRecording(); // Avvia automaticamente la registrazione
+  } catch (error) {
+    console.error("Errore nell'accesso alla videocamera:", error);
+    cameraError.style.display = "block";
+    cameraError.textContent = "Errore: " + error.message;
+  }
+}
+
+// Funzione per avviare la registrazione
+function startRecording() {
+  let options;
+  if (MediaRecorder.isTypeSupported("video/webm")) {
+    options = { mimeType: "video/webm" };
+  } else if (MediaRecorder.isTypeSupported("video/mp4")) {
+    options = { mimeType: "video/mp4" };
+  } else {
+    console.error("Formato video non supportato dal browser.");
+    return;
+  }
+
+  recordedChunks = []; // Reset dei chunk precedenti
+  mediaRecorder = new MediaRecorder(stream, options);
+
+  mediaRecorder.ondataavailable = (event) => {
+    if (event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+
+  mediaRecorder.onstop = () => {
+    if (!isStoppingCamera) {
+      saveVideo(); // Salva il video solo se non si sta spegnendo la fotocamera
+    }
+  };
+
+  mediaRecorder.start(); // Avvia la registrazione
+  isRecording = true;
+}
+
+// Funzione per fermare la registrazione e salvare il video
+function stopAndSaveRecording() {
+  if (isRecording && mediaRecorder.state !== "inactive") {
+    isStoppingCamera = false; // Stiamo fermando la registrazione per salvarla
+    mediaRecorder.stop();
+    isRecording = false;
+
+    // Dopo aver fermato, riparte automaticamente
+    setTimeout(startRecording, 500); // Attendere un attimo e ripartire
+  }
+}
+
+// Funzione per salvare il video
+function saveVideo() {
+  const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+  const url = URL.createObjectURL(blob);
+
+  // Crea un elemento video e lo aggiunge al contenitore
+  const videoItem = document.createElement("video");
+  videoItem.src = url;
+  videoItem.controls = true;
+  videoItem.width = 320;
+  videoContainer.appendChild(videoItem);
+
+  // Crea un link di download per il video
+  const downloadLink = document.createElement("a");
+  downloadLink.href = url;
+  downloadLink.download = "video_" + new Date().toISOString() + ".webm";
+  downloadLink.textContent = "Scarica video";
+  videoContainer.appendChild(downloadLink);
+}
+
+// Ferma la videocamera e interrompe la registrazione **senza salvare il video**
+stopCameraButton.addEventListener("click", () => {
+  if (stream) {
+    isStoppingCamera = true; // Indica che stiamo spegnendo la fotocamera
+    if (isRecording && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop(); // Ferma la registrazione, ma senza salvare
+    }
+    stream.getTracks().forEach((track) => track.stop());
+    videoElement.srcObject = null;
+    stream = null;
+  }
+  startCameraButton.style.display = "inline-block";
+  stopCameraButton.style.display = "none";
+});
+
+// Avvia la videocamera al click
+startCameraButton.addEventListener("click", startCamera);
+
+// Assegna la funzione `stopAndSaveRecording()` a tutti i pulsanti della partita
+document
+  .querySelectorAll(
+    ".btn-player1, .btn-player2, .btn-aceP1, .btn-FalloP1, .btn-erroreP1, .btn-aceP2, .btn-FalloP2, .btn-erroreP2"
+  )
+  .forEach((button) => button.addEventListener("click", stopAndSaveRecording));
