@@ -616,3 +616,21 @@ document
     ".btn-player1, .btn-player2, .btn-aceP1, .btn-FalloP1, .btn-erroreP1, .btn-aceP2, .btn-FalloP2, .btn-erroreP2"
   )
   .forEach((button) => button.addEventListener("click", stopAndSaveRecording));
+
+//Menu Hambuerger//
+document.addEventListener("DOMContentLoaded", function () {
+  const menu = document.getElementById("menu");
+  const btn = document.getElementById("hamburger-btn");
+
+  btn.addEventListener("click", function (event) {
+    event.stopPropagation(); // Evita la chiusura immediata quando clicchi il pulsante
+    menu.classList.toggle("show");
+  });
+
+  // Chiudi il menu se si clicca fuori
+  document.addEventListener("click", function (event) {
+    if (!menu.contains(event.target) && !btn.contains(event.target)) {
+      menu.classList.remove("show");
+    }
+  });
+});
